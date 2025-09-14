@@ -1,8 +1,8 @@
 FROM python:3.9-buster
 
-RUN echo "deb https://mirrors.huaweicloud.com/debian/ buster main contrib non-free" > /etc/apt/sources.list && \
-    echo "deb https://mirrors.huaweicloud.com/debian/ buster-updates main contrib non-free" >> /etc/apt/sources.list && \
-    echo "deb https://mirrors.huaweicloud.com/debian-security/ buster/updates main contrib non-free" >> /etc/apt/sources.list
+# RUN echo "deb https://mirrors.huaweicloud.com/debian/ buster main contrib non-free" > /etc/apt/sources.list && \
+#     echo "deb https://mirrors.huaweicloud.com/debian/ buster-updates main contrib non-free" >> /etc/apt/sources.list && \
+#     echo "deb https://mirrors.huaweicloud.com/debian-security/ buster/updates main contrib non-free" >> /etc/apt/sources.list
 
 RUN apt-get update && \
     apt-get install -y gcc libc-dev default-mysql-client default-libmysqlclient-dev nginx libsasl2-dev libldap2-dev libssl-dev zip jq && \
