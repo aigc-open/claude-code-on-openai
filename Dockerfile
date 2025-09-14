@@ -4,7 +4,7 @@ FROM python:3.9-buster
 #     echo "deb https://mirrors.huaweicloud.com/debian/ buster-updates main contrib non-free" >> /etc/apt/sources.list && \
 #     echo "deb https://mirrors.huaweicloud.com/debian-security/ buster/updates main contrib non-free" >> /etc/apt/sources.list
 
-RUN apt-get update -y
+# RUN apt-get update -y
 
 
 RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
