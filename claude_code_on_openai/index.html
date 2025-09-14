@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claude Code in PH8 - 开箱即用零门槛</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: #000;
+            color: #fff;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+        
+        /* 动态背景 */
+        .background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.3) 0%, transparent 50%);
+            animation: backgroundShift 20s ease-in-out infinite;
+        }
+        
+        @keyframes backgroundShift {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.1) rotate(1deg); }
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
+        /* 导航栏 */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .nav-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+        
+        .nav-links a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            color: #667eea;
+        }
+        
+        /* Hero 区域 */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            padding-top: 80px;
+        }
+        
+        .hero-content {
+            max-width: 900px;
+            z-index: 10;
+        }
+        
+        .hero-badge {
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            background: rgba(102, 126, 234, 0.1);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            border-radius: 50px;
+            color: #667eea;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 2rem;
+            animation: fadeInUp 1s ease-out;
+        }
+        
+        .hero-title {
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.1;
+            animation: fadeInUp 1s ease-out 0.2s both;
+        }
+        
+        .hero-subtitle {
+            font-size: clamp(1.2rem, 3vw, 1.8rem);
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 2rem;
+            font-weight: 300;
+            animation: fadeInUp 1s ease-out 0.4s both;
+        }
+        
+        .hero-description {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 3rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            animation: fadeInUp 1s ease-out 0.6s both;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+            animation: fadeInUp 1s ease-out 0.8s both;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.4);
+        }
+        
+        /* 主要内容区域 */
+        .main-section {
+            padding: 6rem 0;
+            position: relative;
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+        
+        .section-title {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .section-subtitle {
+            font-size: 1.3rem;
+            color: rgba(255, 255, 255, 0.7);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        /* 卡片容器 */
+        .card-container {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 3rem;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
+        }
+        
+        /* Tab 导航 */
+        .tabs-nav {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 3rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 16px;
+            padding: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .tab-button {
+            flex: 1;
+            max-width: 200px;
+            padding: 1rem 2rem;
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .tab-button.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+        
+        .tab-button:hover:not(.active) {
+            color: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        /* Tab 内容 */
+        .tab-content {
+            display: none;
+            animation: fadeInUp 0.5s ease-out;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .step-content {
+            text-align: center;
+            padding: 2rem 0;
+        }
+        
+        .step-icon {
+            font-size: 5rem;
+            margin-bottom: 2rem;
+            opacity: 0.8;
+        }
+        
+        .step-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: #fff;
+        }
+        
+        .step-description {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        /* 代码块 */
+        .code-block {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+            font-size: 1rem;
+            color: #e2e8f0;
+            overflow-x: auto;
+            position: relative;
+            margin: 2rem 0;
+            text-align: left;
+        }
+        
+        .code-block::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+        
+        .highlight {
+            color: #f093fb;
+            font-weight: 600;
+        }
+        
+        /* 配置网格 */
+        .config-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+        
+        .config-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: left;
+            transition: all 0.3s ease;
+        }
+        
+        .config-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-5px);
+        }
+        
+        .config-label {
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .config-value {
+            color: #e2e8f0;
+            font-family: 'SF Mono', 'Monaco', monospace;
+            font-size: 1rem;
+            word-break: break-all;
+        }
+        
+        /* 使用示例 */
+        .usage-example {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 2rem 0;
+            text-align: left;
+        }
+        
+        .example-title {
+            color: #fff;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .example-desc {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+        
+        /* 密钥获取区域 */
+        .key-section {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            border-radius: 20px;
+            padding: 3rem;
+            text-align: center;
+            margin: 4rem 0;
+        }
+        
+        .key-section h3 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #fff;
+        }
+        
+        .key-section p {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+        
+        .key-link {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+        
+        .key-link:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.4);
+        }
+        
+        /* 特性网格 */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 4rem 0;
+        }
+        
+        .feature-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 2.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+        
+        .feature-card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.08);
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            opacity: 0.9;
+        }
+        
+        .feature-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 1rem;
+        }
+        
+        .feature-desc {
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.6;
+        }
+        
+        /* 页脚 */
+        .footer {
+            text-align: center;
+            padding: 4rem 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 6rem;
+        }
+        
+        /* 动画 */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .nav-content {
+                padding: 1rem;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .hero {
+                padding-top: 100px;
+                padding-bottom: 2rem;
+            }
+            
+            .container {
+                padding: 0 1rem;
+            }
+            
+            .card-container {
+                padding: 2rem;
+            }
+            
+            .tabs-nav {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .tab-button {
+                max-width: none;
+            }
+            
+            .config-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* 滚动条样式 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="background"></div>
+    
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-content">
+            <div class="logo">🚀 Claude Code in PH8</div>
+            <ul class="nav-links">
+                <li><a href="#home">首页</a></li>
+                <li><a href="#main">使用文档</a></li>
+                <li><a href="#key-section" id="key-link">密钥获取</a></li>
+            </ul>
+        </div>
+    </nav>
+    
+    <!-- Hero 区域 -->
+    <section class="hero" id="home">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-badge">✨ 全新体验，即刻开始</div>
+                <h1 class="hero-title">Claude Code in PH8</h1>
+                <p class="hero-subtitle">开箱即用零门槛，模型创新快人一步</p>
+                <p class="hero-description">
+                    使用 claude-code 工具，享受 Claude 级别的编程体验<br>
+                    支持多种大模型，无需复杂配置，让 AI 编程更简单
+                </p>
+                <a href="#main" class="cta-button">立即开始 →</a>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 主要内容 -->
+    <section class="main-section" id="main">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">🛠️ 使用 claude-code 工具</h2>
+                <p class="section-subtitle">
+                    claude-code 是 Anthropic 官方提供的命令行工具<br>
+                    通过本代理服务，可以使用各种 OpenAI 兼容的大模型
+                </p>
+            </div>
+            
+            <div class="card-container">
+                <div class="tabs-nav">
+                    <button class="tab-button active" onclick="switchTab(event, 'install')">
+                        📦 安装工具
+                    </button>
+                    <button class="tab-button" onclick="switchTab(event, 'config')">
+                        ⚙️ 配置环境
+                    </button>
+                    <button class="tab-button" onclick="switchTab(event, 'usage')">
+                        🚀 开始使用
+                    </button>
+                </div>
+                
+                <div id="install" class="tab-content active">
+                    <div class="step-content">
+                        <div class="step-icon">📦</div>
+                        <h3 class="step-title">安装 claude-code 工具</h3>
+                        <p class="step-description">
+                            使用 npm 全局安装 claude-code 命令行工具<br>
+                            确保您的系统已安装 Node.js 环境
+                        </p>
+                        <div class="code-block">npm install -g @anthropic-ai/claude-code</div>
+                        <p class="step-description">
+                            安装完成后，您可以在任何目录下使用 <code style="background: rgba(102, 126, 234, 0.2); padding: 0.3rem 0.6rem; border-radius: 6px; color: #667eea;">claude</code> 命令
+                        </p>
+                    </div>
+                </div>
+                
+                <div id="config" class="tab-content">
+                    <div class="step-content">
+                        <div class="step-icon">⚙️</div>
+                        <h3 class="step-title">配置环境变量</h3>
+                        <p class="step-description">
+                            设置代理服务地址和 API 密钥，支持多种模型选择
+                        </p>
+                        
+                        <div class="config-grid">
+                            <div class="config-item">
+                                <div class="config-label">基础 URL</div>
+                                <div class="config-value" id="base-url">ANTHROPIC_BASE_URL=http://ph8.co/claude_code/gpt-4o</div>
+                            </div>
+                            <div class="config-item">
+                                <div class="config-label">API 密钥</div>
+                                <div class="config-value">ANTHROPIC_API_KEY=<span class="highlight">your-api-key</span></div>
+                            </div>
+                        </div>
+                        
+                        <div class="usage-example">
+                            <div class="example-title">💡 支持的模型</div>
+                            <div class="example-desc">您可以将 URL 中的模型名称替换为以下任意模型：</div>
+                            <div class="code-block" id="model-examples">
+# GPT 系列
+http://ph8.co/claude_code/<span class="highlight">gpt-4o</span>
+http://ph8.co/claude_code/<span class="highlight">gpt-3.5-turbo</span>
+
+# 国产模型
+http://ph8.co/claude_code/<span class="highlight">qwen2.5-7B</span>
+http://ph8.co/claude_code/<span class="highlight">deepseek-v3</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="usage" class="tab-content">
+                    <div class="step-content">
+                        <div class="step-icon">🚀</div>
+                        <h3 class="step-title">启动 claude-code</h3>
+                        <p class="step-description">
+                            一行命令启动 claude-code，开始您的 AI 编程之旅
+                        </p>
+                        
+                        <div class="usage-example">
+                            <div class="example-title">🎯 快速启动</div>
+                            <div class="example-desc">复制以下命令，替换您的 API 密钥后执行：</div>
+                            <div class="code-block" id="quick-start">ANTHROPIC_BASE_URL=http://ph8.co/claude_code/gpt-4o ANTHROPIC_API_KEY=<span class="highlight">your-api-key</span> claude</div>
+                        </div>
+                        
+                        <div class="usage-example">
+                            <div class="example-title">💻 使用示例</div>
+                            <div class="example-desc">启动后，您可以直接与 AI 对话，进行代码编写、调试、优化等操作：</div>
+                            <div class="code-block">
+$ claude
+Claude: 您好！我是 Claude，您的 AI 编程助手。
+        我可以帮您编写代码、解决问题、优化算法等。
+        请告诉我您需要什么帮助？
+
+You: 帮我写一个 Python 快速排序算法
+
+Claude: 当然！我来为您编写一个 Python 快速排序算法...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 密钥获取区域 -->
+            <div class="key-section" id="key-section">
+                <h3>🔑 获取 API 密钥</h3>
+                <p>
+                    需要 API 密钥才能使用服务<br>
+                    前往 PH8 大模型开放平台获取您的专属密钥
+                </p>
+                <a href="#" id="key-button" target="_blank" class="key-link">
+                    前往获取密钥 →
+                </a>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 特性展示 -->
+    <section class="features-section" id="features">
+        <div class="container">
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🚀</div>
+                    <div class="feature-title">开箱即用</div>
+                    <div class="feature-desc">无需复杂配置，三步即可开始使用，让 AI 编程变得简单高效</div>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🔄</div>
+                    <div class="feature-title">多模型支持</div>
+                    <div class="feature-desc">支持 GPT-4o、Qwen、DeepSeek 等多种先进模型，满足不同需求</div>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <div class="feature-title">高性能体验</div>
+                    <div class="feature-desc">流式响应，实时交互，提供媲美原生 Claude 的使用体验</div>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🛠️</div>
+                    <div class="feature-title">完整工具调用</div>
+                    <div class="feature-desc">支持 Function Calling，让 AI 能够执行复杂的编程任务</div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container">
+            <p>🎯 Claude Code in PH8 | 让 AI 编程更简单 | 由 PH8 提供技术支持</p>
+        </div>
+    </footer>
+
+    <script>
+        function switchTab(event, tabName) {
+            // 隐藏所有 tab 内容
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // 移除所有 tab 按钮的 active 状态
+            const tabButtons = document.querySelectorAll('.tab-button');
+            tabButtons.forEach(button => {
+                button.classList.remove('active');
+            });
+            
+            // 显示选中的 tab 内容
+            document.getElementById(tabName).classList.add('active');
+            
+            // 添加选中按钮的 active 状态
+            event.target.classList.add('active');
+        }
+        
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            // 跳过外部链接按钮
+            if (anchor.id === 'key-button') {
+                return;
+            }
+            
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    // 为密钥获取部分添加偏移量，避免被导航栏遮挡
+                    if (this.getAttribute('href') === '#key-section') {
+                        const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - 100;
+                        window.scrollTo({
+                            top: targetPosition,
+                            behavior: 'smooth'
+                        });
+                    } else {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                }
+            });
+        });
+        
+        // 导航栏滚动效果
+        window.addEventListener('scroll', () => {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 100) {
+                navbar.style.background = 'rgba(0, 0, 0, 0.95)';
+            } else {
+                navbar.style.background = 'rgba(0, 0, 0, 0.8)';
+            }
+        });
+        
+        // 动态设置域名
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentDomain = window.location.hostname;
+            const protocol = window.location.protocol;
+            const port = window.location.port ? ':' + window.location.port : '';
+            const baseUrl = `${protocol}//${currentDomain}${port}`;
+            
+            // 更新密钥获取按钮
+            const keyButton = document.getElementById('key-button');
+            if (keyButton) {
+                keyButton.href = baseUrl;
+                keyButton.textContent = `前往 ${currentDomain} 获取密钥 →`;
+                keyButton.onclick = function(e) {
+                    e.preventDefault();
+                    window.open(baseUrl, '_blank');
+                };
+            }
+            
+            // 更新基础 URL 配置
+            const baseUrlElement = document.getElementById('base-url');
+            if (baseUrlElement) {
+                baseUrlElement.innerHTML = `ANTHROPIC_BASE_URL=${baseUrl}/claude_code/gpt-4o`;
+            }
+            
+            // 更新模型示例
+            const modelExamples = document.getElementById('model-examples');
+            if (modelExamples) {
+                modelExamples.innerHTML = `
+# GPT 系列
+${baseUrl}/claude_code/<span class="highlight">gpt-4o</span>
+${baseUrl}/claude_code/<span class="highlight">gpt-3.5-turbo</span>
+
+# 国产模型
+${baseUrl}/claude_code/<span class="highlight">qwen2.5-7B</span>
+${baseUrl}/claude_code/<span class="highlight">deepseek-v3</span>
+                `;
+            }
+            
+            // 更新快速启动命令
+            const quickStart = document.getElementById('quick-start');
+            if (quickStart) {
+                quickStart.innerHTML = `ANTHROPIC_BASE_URL=${baseUrl}/claude_code/gpt-4o ANTHROPIC_API_KEY=<span class="highlight">your-api-key</span> claude`;
+            }
+        });
+    </script>
+</body>
+</html>
+
+    
