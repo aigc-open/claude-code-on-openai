@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  claude-code-on-openai:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: claude-code-on-openai
+    ports:
+      - "8082:8082"
+    environment:
+      # OpenAI API configuration
+      - OPENAI_BASE_URL=${OPENAI_BASE_URL:-https://api.openai.com/v1}
+      - MAX_TOKENS=${MAX_TOKENS:-10240}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8082/claude_code/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+
+
