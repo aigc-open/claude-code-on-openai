@@ -740,7 +740,7 @@ async def create_message_with_model(
             raise HTTPException(status_code=401, detail="Missing API key. Please provide it in Authorization header (Bearer token) or x-api-key header.")
         
         # Use OpenAI API key and configuration
-        litellm_request["api_key"] = api_key.replace("sk-ant-", "")
+        # litellm_request["api_key"] = api_key.replace("sk-ant-", "")
         litellm_request["Authorization"] = f"Bearer " + litellm_request["api_key"]
         litellm_request["extra_headers"] = {
             "Authorization": litellm_request["Authorization"]
