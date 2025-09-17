@@ -743,7 +743,7 @@ async def create_message_with_model(
         litellm_request["api_key"] = api_key.replace("sk-ant-", "")
         litellm_request["Authorization"] = f"Bearer " + litellm_request["api_key"]
         litellm_request["extra_headers"] = {
-            "Authorization": litellm_request["authorization"]
+            "Authorization": litellm_request["Authorization"]
         }
         if OPENAI_BASE_URL:
             litellm_request["api_base"] = OPENAI_BASE_URL
