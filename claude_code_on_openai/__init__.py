@@ -741,6 +741,7 @@ async def create_message_with_model(
         
         # Use OpenAI API key and configuration
         litellm_request["api_key"] = api_key.replace("sk-ant-", "")
+        litellm_request["Authorization"] = f"Bearer " + litellm_request["api_key"]
         if OPENAI_BASE_URL:
             litellm_request["api_base"] = OPENAI_BASE_URL
             logger.debug(f"Using custom OpenAI base URL {OPENAI_BASE_URL} for model: {request.model}")
