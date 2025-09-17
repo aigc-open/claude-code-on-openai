@@ -741,9 +741,9 @@ async def create_message_with_model(
         
         # Use OpenAI API key and configuration
         litellm_request["api_key"] = api_key.replace("sk-ant-", "")
-        litellm_request["authorization"] = f"Bearer " + litellm_request["api_key"]
+        litellm_request["Authorization"] = f"Bearer " + litellm_request["api_key"]
         litellm_request["extra_headers"] = {
-            "authorization": litellm_request["authorization"]
+            "Authorization": litellm_request["authorization"]
         }
         if OPENAI_BASE_URL:
             litellm_request["api_base"] = OPENAI_BASE_URL
