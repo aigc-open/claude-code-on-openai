@@ -753,8 +753,10 @@ async def create_message_with_model(
             logger.debug(f"Using default OpenAI endpoint for model: {request.model}")
         litellm_request["api_base"] = OPENAI_BASE_URL
         litellm_request["max_tokens"] = MAX_TOKENS
+        litellm_request_debug = dict(litellm_request)
+        litellm_request_debug["messages"] = []
         
-        logger.debug(f"LITELLM REQUEST: {litellm_request}")
+        logger.debug(f"LITELLM REQUEST: {litellm_request_debug}")
         
         # Handle OpenAI model request processing
         if "messages" in litellm_request:
