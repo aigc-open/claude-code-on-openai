@@ -621,6 +621,9 @@
                     <button class="tab-button" onclick="switchTab(event, 'usage')">
                         🚀 开始使用
                     </button>
+                    <button class="tab-button" onclick="switchTab(event, 'faq')">
+                        ❓ 常见问题
+                    </button>
                 </div>
                 
                 <div id="install" class="tab-content active">
@@ -660,14 +663,20 @@
                         <div class="usage-example">
                             <div class="example-title">💡 支持的模型</div>
                             <div class="example-desc">您可以将 URL 中的模型名称替换为以下任意模型：</div>
-                            <div class="code-block" id="model-examples">
-# GPT 系列
+                            <div class="usage-example">
+                                <div class="example-title">🔥 GPT 系列</div>
+                                <div class="code-block" id="gpt-models">
 http://ph8.co/claude_code/<span class="highlight">gpt-4o</span>
 http://ph8.co/claude_code/<span class="highlight">gpt-3.5-turbo</span>
-
-# 国产模型
+                                </div>
+                            </div>
+                            
+                            <div class="usage-example">
+                                <div class="example-title">🇨🇳 国产模型</div>
+                                <div class="code-block" id="model-examples">
 http://ph8.co/claude_code/<span class="highlight">qwen2.5-7B</span>
 http://ph8.co/claude_code/<span class="highlight">deepseek-v3</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -683,8 +692,23 @@ http://ph8.co/claude_code/<span class="highlight">deepseek-v3</span>
                         
                         <div class="usage-example">
                             <div class="example-title">🎯 快速启动</div>
-                            <div class="example-desc">复制以下命令，替换您的 API 密钥后执行：</div>
-                            <div class="code-block" id="quick-start">ANTHROPIC_BASE_URL=http://ph8.co/claude_code/gpt-4o ANTHROPIC_API_KEY=<span class="highlight">your-api-key</span> claude</div>
+                            <div class="example-desc">
+                                <strong>方法一：</strong> 使用环境变量启动（推荐）
+                            </div>
+                            <div class="code-block">
+# 设置环境变量
+export ANTHROPIC_BASE_URL=http://ph8.co/claude_code/gpt-4o
+export ANTHROPIC_API_KEY=<span class="highlight">your-api-key</span>
+
+# 启动 claude-code
+claude
+                            </div>
+                            <div class="example-desc" style="margin-top: 1.5rem;">
+                                <strong>方法二：</strong> 一行命令启动
+                            </div>
+                            <div class="code-block" id="quick-start">
+ANTHROPIC_BASE_URL=http://ph8.co/claude_code/gpt-4o ANTHROPIC_API_KEY=<span class="highlight">your-api-key</span> claude
+                            </div>
                         </div>
                         
                         <div class="usage-example">
@@ -699,6 +723,87 @@ Claude: 您好！我是 Claude，您的 AI 编程助手。
 You: 帮我写一个 Python 快速排序算法
 
 Claude: 当然！我来为您编写一个 Python 快速排序算法...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="faq" class="tab-content">
+                    <div class="step-content">
+                        <div class="step-icon">❓</div>
+                        <h3 class="step-title">常见问题解答</h3>
+                        <p class="step-description">
+                            遇到问题？这里有最常见问题的解决方案
+                        </p>
+                        
+                        <div class="usage-example">
+                            <div class="example-title">🚫 无法连接到 Anthropic 服务</div>
+                            <div class="example-desc">
+                                如果您在 Mac 上遇到 "Unable to connect to Anthropic services" 错误，可以尝试以下解决方案：
+                            </div>
+                            <div class="code-block">
+# 错误信息示例：
+Unable to connect to Anthropic services
+Failed to connect to api.anthropic.com: ECONNREFUSED
+Please check your internet connection and network settings.
+                            </div>
+                        </div>
+                        
+                        <div class="usage-example">
+                            <div class="example-title">💡 解决方案</div>
+                            <div class="example-desc">
+                                这个问题通常是由于 claude-code 工具的初始化配置导致的。请按照以下步骤解决：
+                            </div>
+                            <div class="code-block">
+# 1. 找到并打开配置文件
+open ~/.claude.json
+</div>
+                            <div class="example-desc" style="margin: 1rem 0;">
+                                <strong>步骤 2:</strong> 在 JSON 文件中添加以下配置项
+                            </div>
+                            <div class="code-block">
+{
+  <span class="highlight">"hasCompletedOnboarding": true</span>
+}
+</div>
+                            <div class="example-desc" style="margin: 1rem 0;">
+                                <strong>步骤 3:</strong> 保存文件后重新启动 claude-code
+                            </div>
+                            <div class="code-block">
+# 重新运行 claude 命令
+claude
+                        </div>
+                        
+                        <div class="usage-example">
+                            <div class="example-title">📝 完整配置示例</div>
+                            <div class="example-desc">
+                                如果您的 ~/.claude.json 文件不存在或为空，可以创建包含以下内容的文件：
+                            </div>
+                            <div class="code-block">
+{
+  <span class="highlight">"hasCompletedOnboarding": true</span>,
+  "apiKey": "your-api-key-here"
+}
+                            </div>
+                        </div>
+                        
+                        <div class="usage-example">
+                            <div class="example-title">🔧 其他常见问题</div>
+                            <div class="example-desc">
+                                <strong>Q: 如何切换不同的模型？</strong><br>
+                                A: 修改 ANTHROPIC_BASE_URL 中的模型名称即可，例如将 <code style="background: rgba(102, 126, 234, 0.2); padding: 0.2rem 0.4rem; border-radius: 4px; color: #667eea;">gpt-4o</code> 替换为 <code style="background: rgba(102, 126, 234, 0.2); padding: 0.2rem 0.4rem; border-radius: 4px; color: #667eea;">qwen2.5-7B</code><br><br>
+                                
+                                <strong>Q: API 密钥在哪里获取？</strong><br>
+                                A: 点击页面上的"获取密钥"按钮，前往平台注册并获取您的专属密钥<br><br>
+                                
+                                <strong>Q: 支持哪些操作系统？</strong><br>
+                                A: claude-code 支持 Windows、macOS 和 Linux 系统，需要 Node.js 环境<br><br>
+                                
+                                <strong>Q: 如何验证配置是否正确？</strong><br>
+                                A: 运行 <code style="background: rgba(102, 126, 234, 0.2); padding: 0.2rem 0.4rem; border-radius: 4px; color: #667eea;">claude --version</code> 命令，如果显示版本号则说明安装成功<br><br>
+                                
+                                <strong>Q: 遇到网络连接问题怎么办？</strong><br>
+                                A: 确保网络连接正常，检查防火墙设置，或尝试使用代理服务器
                             </div>
                         </div>
                     </div>
@@ -840,24 +945,37 @@ Claude: 当然！我来为您编写一个 Python 快速排序算法...
                 baseUrlElement.innerHTML = `ANTHROPIC_BASE_URL=${baseUrl}/claude_code/gpt-4o`;
             }
             
-            // 更新模型示例
+            // 更新模型示例 - GPT 系列
+            const gptModels = document.getElementById('gpt-models');
+            if (gptModels) {
+                gptModels.innerHTML = `${baseUrl}/claude_code/<span class="highlight">gpt-4o</span>
+${baseUrl}/claude_code/<span class="highlight">gpt-3.5-turbo</span>`;
+            }
+            
+            // 更新模型示例 - 国产模型
             const modelExamples = document.getElementById('model-examples');
             if (modelExamples) {
-                modelExamples.innerHTML = `
-# GPT 系列
-${baseUrl}/claude_code/<span class="highlight">gpt-4o</span>
-${baseUrl}/claude_code/<span class="highlight">gpt-3.5-turbo</span>
-
-# 国产模型
-${baseUrl}/claude_code/<span class="highlight">qwen2.5-7B</span>
-${baseUrl}/claude_code/<span class="highlight">deepseek-v3</span>
-                `;
+                modelExamples.innerHTML = `${baseUrl}/claude_code/<span class="highlight">qwen2.5-7B</span>
+${baseUrl}/claude_code/<span class="highlight">deepseek-v3</span>`;
             }
             
             // 更新快速启动命令
             const quickStart = document.getElementById('quick-start');
             if (quickStart) {
-                quickStart.innerHTML = `ANTHROPIC_BASE_URL=${baseUrl}/claude_code/gpt-4o ANTHROPIC_API_KEY=<span class="highlight">your-api-key</span> claude`;
+                quickStart.innerHTML = `ANTHROPIC_BASE_URL=${baseUrl}/claude_code/gpt-4o \\
+ANTHROPIC_API_KEY=<span class="highlight">your-api-key</span> \\
+claude`;
+            }
+            
+            // 更新方法一中的环境变量设置
+            const envVarBlock = document.querySelector('#usage .code-block:first-of-type');
+            if (envVarBlock) {
+                envVarBlock.innerHTML = `# 设置环境变量
+export ANTHROPIC_BASE_URL=${baseUrl}/claude_code/gpt-4o
+export ANTHROPIC_API_KEY=<span class="highlight">your-api-key</span>
+
+# 启动 claude-code
+claude`;
             }
         });
     </script>
