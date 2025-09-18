@@ -948,12 +948,12 @@ async def create_message_with_model(
         if 'response' in error_details and error_details['response']:
             error_message += f"\nResponse: {error_details['response']}"
         
-        status_code = error_details.get('status_code', 500)
+        status_code = int(error_details.get('status_code', 500))
         raise HTTPException(status_code=status_code, detail=error_message)
 
 # Keep the original endpoints for backward compatibility
-@app.post("/v1/messages")
-async def create_message(request: MessagesRequest, raw_request: Request):
-    """Original endpoint for backward compatibility."""
-    return await create_message_with_model("gpt-4o", request, raw_request)
+# @app.post("/v1/messages")
+# async def create_message(request: MessagesRequest, raw_request: Request):
+#     """Original endpoint for backward compatibility."""
+#     return await create_message_with_model("gpt-4o", request, raw_request)
 
