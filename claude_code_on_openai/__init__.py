@@ -755,6 +755,7 @@ async def create_message_with_model(
         litellm_request["max_tokens"] = MAX_TOKENS
         litellm_request_debug = dict(litellm_request)
         litellm_request_debug["messages"] = []
+        litellm_request_debug["tools"] = []
         
         logger.debug(f"LITELLM REQUEST: {litellm_request_debug}")
         
