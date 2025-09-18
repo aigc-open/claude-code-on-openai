@@ -735,7 +735,7 @@ async def create_message_with_model(
         if api_key and api_key.startswith("Bearer "):
             api_key = api_key[7:]  # Remove "Bearer " prefix
         elif raw_request.headers.get("x-api-key"):
-            api_key = raw_request.headers.get("x-api-key")
+            api_key = raw_request.headers.get("x-api-key", "")
         else:
             raise HTTPException(status_code=401, detail="Missing API key. Please provide it in Authorization header (Bearer token) or x-api-key header.")
         
@@ -751,6 +751,10 @@ async def create_message_with_model(
             logger.debug(f"Using custom OpenAI base URL {OPENAI_BASE_URL} for model: {request.model}")
         else:
             logger.debug(f"Using default OpenAI endpoint for model: {request.model}")
+        litellm_request["api_base"] = OPENAI_BASE_URL
+        litellm_request["max_tokens"] = MAX_TOKENS
+        
+        logger.debug(f"LITELLM REQUEST: {litellm_request}")
         
         # Handle OpenAI model request processing
         if "messages" in litellm_request:
@@ -861,8 +865,7 @@ async def create_message_with_model(
                     logger.warning(f"Message {i} has None content - replacing with placeholder")
                     litellm_request["messages"][i]["content"] = "..."
         
-        litellm_request["api_base"] = OPENAI_BASE_URL
-        litellm_request["max_tokens"] = MAX_TOKENS
+        
         # Handle streaming mode
         if request.stream:
             num_tools = len(request.tools) if request.tools else 0
